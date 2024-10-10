@@ -1,6 +1,6 @@
 /**
  * TicTacToe.jsx
- * 
+ *
  * @author Gabriel Sessions - JumboCode Fall 2024
  * @description Displays a page with a game of Tic-Tac Toe
  * @todo Devs need to finish the implementation of the game!
@@ -15,13 +15,13 @@ import checkForWinner from "../functions/checkForWinner";
 
 /**
  * generateEmptyBoard
- * 
+ *
  * @description Generates a blank Tic-Tac-Toe board
  * @param {number} boardWidth - Width of the board to be generated
  * @param {number} boardHeight - Height of the board to be generated
- * @returns Array<Array<string|null>> A 2D array board 
+ * @returns Array<Array<string|null>> A 2D array board
  * (boardWidth by boardHeight) will null entries
- * 
+ *
  * @note This is not a "clean" implementation of this function. I chose
  * to make this a bit more readable, especially for devs coming from C/C++.
  * @todo Make this function a 1-liner if you're in the mood :)
@@ -40,14 +40,13 @@ function generateEmptyBoard(boardWidth, boardHeight) {
   return newBoard;
 }
 
-export default function TicTacToe({ boardWidth, boardHeight }) {
-
+export default function TicTacToe({ boardWidth, boardHeight, k }) {
   // When the page initially loads, get an empty board
   const initialBoard = generateEmptyBoard(boardWidth, boardHeight);
   const [board, setBoard] = useState(initialBoard);
 
   // Keep track of whose turn it is ("X" or "O")
-  // X starts first 
+  // X starts first
   const [currentTurn, setCurrentTurn] = useState("X");
 
   // Indicator if there is a winner
@@ -55,27 +54,23 @@ export default function TicTacToe({ boardWidth, boardHeight }) {
 
   /**
    * resetGame
-   * 
+   *
    * @todo Function for you TODO!
    * @description Restarts the Tic-Tac-Toe game: clears the board,
    * sets currentTurn to "X" and sets winner to null
    */
   function resetGame() {
-    // Clear the Tic-Tac-Toe board 
-    // Hint: Use the generateEmptyBoard function!
-
-
+    // Clear the Tic-Tac-Toe board
+    setBoard(generateEmptyBoard(boardWidth, boardHeight));
     // Set currentTurn to "X"
-
-
+    setCurrentTurn("X");
     // Set winner to null
-
-
+    setWinner(null);
   }
 
   /**
    * playerMove
-   * 
+   *
    * @description Makes a move on the Tic-Tac-Toe board by placing
    * a player icon/letter on a square on the board. Players are not
    * allowed to put markers on already marked squares.
@@ -83,8 +78,8 @@ export default function TicTacToe({ boardWidth, boardHeight }) {
    * @param {number} columnIndex - column number (0-indexed) of where to make
    * the move
    * @returns Nothing, but it updates the state of the board and switches
-   * whose turn it is if the board space selected is null. 
-   * 
+   * whose turn it is if the board space selected is null.
+   *
    * @note If you want to use a state defined in a component for a function,
    * you'll need to define the function inside the component.
    */
@@ -99,9 +94,9 @@ export default function TicTacToe({ boardWidth, boardHeight }) {
     setBoard((currentBoard) => {
       /**
        * 1. Copy the old board
-       * 
+       *
        * The `...` syntax is called a spread operator.
-       * It "spreads" out (or enumerates) the contents of an array 
+       * It "spreads" out (or enumerates) the contents of an array
        * so that it can be included in a new array declaration.
        */
       const newBoard = [...currentBoard];
@@ -114,29 +109,27 @@ export default function TicTacToe({ boardWidth, boardHeight }) {
       /*
        * 3. Check if anyone won
        */
-      const winner = checkForWinner(board);
+      const winner = checkForWinner(board, k);
       if (winner !== null) {
         setWinner(winner);
       }
 
       /**
-       * 4. Return the new value of the board to be stored in 
+       * 4. Return the new value of the board to be stored in
        * the `board` state
        */
       return newBoard;
-    })
+    });
 
     // Once we update the board, swap turns!
     setCurrentTurn((currentTurn) => {
       if (currentTurn === "X") {
         return "O";
-      }
-      else if (currentTurn === "O") {
+      } else if (currentTurn === "O") {
         return "X";
       }
       return "Unknown";
-    })
-
+    });
   }
 
   return (
@@ -145,9 +138,9 @@ export default function TicTacToe({ boardWidth, boardHeight }) {
         <tbody>
           {
             /**
-             * .map for-loops over an array and executes a function for 
+             * .map for-loops over an array and executes a function for
              * each entry in the array
-             * 
+             *
              * In this case, we're using a double map (for-loop) to render
              * all of the square in our tic-tac-toe board.
              */
@@ -166,75 +159,71 @@ export default function TicTacToe({ boardWidth, boardHeight }) {
                           key={boardColumnIndex}
                           className="border-4 w-20 h-20"
                         >
-                          {
-                            /**
-                             * Display the contents of the square based on the 
-                             * state of the board
-                             */
-                          }
+                          {/**
+                           * Display the contents of the square based on the
+                           * state of the board
+                           */}
                           <Square
                             value={board[boardRowIndex][boardColumnIndex]}
-                            onClick={
-                              () => playerMove(boardRowIndex, boardColumnIndex)
+                            onClick={() =>
+                              playerMove(boardRowIndex, boardColumnIndex)
                             }
                           />
                         </td>
-                      )
-                    }
-                    )}
+                      );
+                    })
+                  }
                 </tr>
-              )
+              );
             })
           }
         </tbody>
       </table>
 
-      {/* 
-        * If the game does not have a winner, show whose turn it is 
-        * If the game has a winner, show who won.
-        * For simplicity, you can assume that a tie is a win for both X and O
-        * and you can print out "Winner: X/O"
-        * 
-        * Note about ternaries: Often we write conditional logic as
-        * [condition] ? <Do if True> : <Do if False>
-        * 
-        * It's a more concise way of writing an if-statement
-        */
-      }
+      {/*
+       * If the game does not have a winner, show whose turn it is
+       * If the game has a winner, show who won.
+       * For simplicity, you can assume that a tie is a win for both X and O
+       * and you can print out "Winner: X/O"
+       *
+       * Note about ternaries: Often we write conditional logic as
+       * [condition] ? <Do if True> : <Do if False>
+       *
+       * It's a more concise way of writing an if-statement
+       */}
 
       {
         // Checks if winner is clearly defined (NOT undefined, null, or empty)
-        winner ?
+        winner ? (
           // Renders if winner is clearly defined
           <>
-            <p className="text-center text-xl font-semibold">Winner: {winner}</p>
+            <p className="text-center text-xl font-semibold">
+              Winner: {winner}
+            </p>
           </>
-          :
+        ) : (
           // Renders if winner is not clearly defined
           <>
             <p className="text-center text-xl font-semibold">
               Current Turn: {currentTurn}
             </p>
           </>
+        )
       }
 
-
-      {/* 
-        Reset Button 
+      {/*
+        Reset Button
         Gabe TODO: Refactor into a <Button /> component
-
-        Dev TODO: Make the button do something useful!
-        Replace this alert with another function...
       */}
       <div className="flex justify-center my-8">
         <button
-          className="text-center border p-2 rounded bg-gray-100 
+          className="text-center border p-2 rounded bg-gray-100
           hover:bg-gray-200"
-          onClick={() => alert("BUG: Replace this with something else...")}
+          onClick={() => resetGame()}
         >
           Reset Game
         </button>
       </div>
     </>
-  )
+  );
 }
